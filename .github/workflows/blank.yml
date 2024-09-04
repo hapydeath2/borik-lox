@@ -24,7 +24,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run bot
-        run: python botл.py
+        run: python bot.py
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
