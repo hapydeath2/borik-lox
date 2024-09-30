@@ -11,10 +11,6 @@ TOKEN = os.getenv('TOKEN')  # Получаем токен из переменн�
 CLIENT_ID = os.getenv('CLIENT_ID')  # Получаем client_id
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')  # Получаем client_secret
 
-<<<<<<< HEAD
-=======
-TOKEN = 
->>>>>>> 3991ac197fe33c90d9b74ef404decd588dff65f5
 
 reddit = praw.Reddit(
     client_id=CLIENT_ID,
