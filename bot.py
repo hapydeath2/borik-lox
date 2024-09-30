@@ -10,14 +10,10 @@ load_dotenv()  # Загружаем переменные окружения из
 
 TOKEN = os.getenv('TOKEN')
 
-CLIENT_ID = os.getenv('REDDIT_CLIENT_ID')
-CLIENT_SECRET = os.getenv('REDDIT_CLIENT_SECRET')
-USER_AGENT = os.getenv('REDDIT_USER_AGENT')
-
-reddit = praw.Reddit(
-    client_id=CLIENT_ID,
-    client_secret=CLIENT_SECRET,
-    user_agent=USER_AGENT,
+reddit= praw.Reddit(
+    CLIENT_ID="uTaJFq_yMLk2iZVPY7H0SQ",
+    CLIENT_SECRET="qP86opbSR2tdhzfLNxown3Ju3NAViA",
+    user_agent="borik lox"
 )
 
 intents = discord.Intents.default()
