@@ -5,7 +5,7 @@ import praw
 import json
 
 
-TOKEN = 'MTI2MDYxNDgxODk2NTIyOTczMQ.GGq0GL.iEuipPy8wzTE6U_quPI4qf_MGAR1p0NIsWwRnQ'
+TOKEN = 
 
 reddit = praw.Reddit(
     client_id="uTaJFq_yMLk2iZVPY7H0SQ",
