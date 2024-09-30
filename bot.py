@@ -4,9 +4,7 @@ from discord.ext import commands
 import praw
 import json
 import os
-from dotenv import load_dotenv
 
-load_dotenv('secret.env')  # Замените 'secret.env' на имя вашего файла
 TOKEN = os.getenv('TOKEN')  # Получаем токен из переменной окружения
 CLIENT_ID = os.getenv('CLIENT_ID')  # Получаем client_id
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')  # Получаем client_secret
