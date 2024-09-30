@@ -4,15 +4,15 @@ from discord.ext import commands
 import praw
 import json
 import os
+from dotenv import load_dotenv
 
-TOKEN = os.getenv('TOKEN')  # Получаем токен из переменной окружения
-CLIENT_ID = os.getenv('CLIENT_ID')  # Получаем client_id
-CLIENT_SECRET = os.getenv('CLIENT_SECRET')  # Получаем client_secret
+load_dotenv()  # Загружаем переменные окружения из .env
 
+TOKEN = os.getenv('TOKEN')
 
 reddit = praw.Reddit(
-    client_id=CLIENT_ID,
-    client_secret=CLIENT_SECRET,
+    CLIENT_ID="uTaJFq_yMLk2iZVPY7H0SQ",
+    CLIENT_SECRET="qP86opbSR2tdhzfLNxown3Ju3NAViA",
     user_agent="borik lox"
 )
 
