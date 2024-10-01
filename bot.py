@@ -6,7 +6,7 @@ import json
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # Загружаем переменные окружения из .env
+load_dotenv('secret.env')  # Загружаем переменные окружения из .env
 
 TOKEN = os.getenv('TOKEN')
 
