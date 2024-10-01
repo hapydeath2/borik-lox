@@ -11,8 +11,8 @@ load_dotenv()  # Загружаем переменные окружения из
 TOKEN = os.getenv('TOKEN')
 
 reddit= praw.Reddit(
-    CLIENT_ID="uTaJFq_yMLk2iZVPY7H0SQ",
-    CLIENT_SECRET="qP86opbSR2tdhzfLNxown3Ju3NAViA",
+    client_id="uTaJFq_yMLk2iZVPY7H0SQ",
+    client_secret="qP86opbSR2tdhzfLNxown3Ju3NAViA",
     user_agent="borik lox"
 )
 
