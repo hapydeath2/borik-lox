@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv('secret.env')  # Загружаем переменные окружения из .env
 
-TOKEN = os.getenv('TOKEN')
+TOKEN = str(os.getenv('DISCORD_TOKEN'))
 
 reddit= praw.Reddit(
     client_id="uTaJFq_yMLk2iZVPY7H0SQ",
