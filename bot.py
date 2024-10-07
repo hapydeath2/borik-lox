@@ -6,19 +6,13 @@ import json
 import os
 from dotenv import load_dotenv
 
-load_dotenv('secret.env')  # Замените 'secret.env' на имя вашего файла
-TOKEN = os.getenv('TOKEN')  # Получаем токен из переменной окружения
-CLIENT_ID = os.getenv('CLIENT_ID')  # Получаем client_id
-CLIENT_SECRET = os.getenv('CLIENT_SECRET')  # Получаем client_secret
+load_dotenv('secret.env')  # Загружаем переменные окружения из .env
 
-<<<<<<< HEAD
-=======
-TOKEN = 
->>>>>>> 3991ac197fe33c90d9b74ef404decd588dff65f5
+TOKEN = os.getenv('TOKEN')
 
-reddit = praw.Reddit(
-    client_id=CLIENT_ID,
-    client_secret=CLIENT_SECRET,
+reddit= praw.Reddit(
+    client_id="uTaJFq_yMLk2iZVPY7H0SQ",
+    client_secret="qP86opbSR2tdhzfLNxown3Ju3NAViA",
     user_agent="borik lox"
 )
 
@@ -33,10 +27,12 @@ MUTE_ROLE_ID = 1261262090379853955
 
 ALLOWED_ROLE_IDS = [1101454647794876417, 1101455245176995950]
 
+# Проверка наличия разрешенной роли или админа
 def has_allowed_role():
-    """ Проверка наличия одной из разрешенных ролей у пользователя. """
+    """ Проверка наличия одной из разрешенных ролей или статуса админа. """
     async def predicate(ctx):
-        return any(role.id in ALLOWED_ROLE_IDS for role in ctx.author.roles)
+        admins = load_admins()
+        return any(role.id in ALLOWED_ROLE_IDS for role in ctx.author.roles) or ctx.author.id in admins
     return commands.check(predicate)
 
 # Слова, которые будет удалять бот
@@ -115,6 +111,7 @@ async def random_images(ctx, subreddit_name: str, num_images: int = 1):
 # Путь к файлу для сохранения списка пользователей
 USERS_FILE = 'users.json'
 POINTS_FILE = 'points.json'
+ADMINS_FILE = "admins.json"
 # Загружаем список пользователей из файла
 def load_users():
     try:
@@ -137,6 +134,17 @@ def load_points():
 def save_points(points):
     with open(POINTS_FILE, 'w') as f:
         json.dump(points, f)
+
+def load_admins():
+    try:
+        with open(ADMINS_FILE, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+
+def save_admins(users):
+    with open(ADMINS_FILE, 'w') as f:
+        json.dump(users, f)
 
 async def list_users(ctx):
     users = load_users()
@@ -198,29 +206,33 @@ async def remove_user(ctx, member: discord.Member):
 
 # Команда для добавления баллов пользователю (печенька)
 @bot.command(name='печенька')
-@has_allowed_role()  # Ограничение по ролям
 async def give_cookie(ctx, member: discord.Member, points_to_add: int = 1):
     points = load_points()
-
-    if str(member.id) in points:
-        points[str(member.id)] += points_to_add
-        save_points(points)
-        await ctx.send(f'{member.name} получил {points_to_add} балл(ов)! Теперь у него {points[str(member.id)]} баллов.')
+    admins = load_admins()
+    if any(role.id in ALLOWED_ROLE_IDS for role in ctx.author.roles) or ctx.author.id in admins:
+        if str(member.id) in points:
+            points[str(member.id)] += points_to_add
+            save_points(points)
+            await ctx.send(f'{member.name} получил {points_to_add} балл(ов)! Теперь у него {points[str(member.id)]} баллов.')
+        else:
+            await ctx.send(f'{member.name} не найден в списке пользователей.')
     else:
-        await ctx.send(f'{member.name} не найден в списке пользователей.')
+        await ctx.send('У вас нет прав на выполнение этой команды.')
 
 @bot.command(name='забрать_печеньку')
-@has_allowed_role()  # Ограничение по ролям
 async def take_cookie(ctx, member: discord.Member, points_to_remove: int = 1):
     points = load_points()
+    admins = load_admins()
 
-    if str(member.id) in points:
-        points[str(member.id)] = max(points[str(member.id)] - points_to_remove, 0)  # Не допускаем отрицательные баллы
-        save_points(points)
-        await ctx.send(f'У {member.name} было снято {points_to_remove} балл(ов). Теперь у него {points[str(member.id)]} баллов.')
+    if any(role.id in ALLOWED_ROLE_IDS for role in ctx.author.roles) or ctx.author.id in admins:
+        if str(member.id) in points:
+            points[str(member.id)] = max(points[str(member.id)] - points_to_remove, 0)  # Не допускаем отрицательные баллы
+            save_points(points)
+            await ctx.send(f'У {member.name} было снято {points_to_remove} балл(ов). Теперь у него {points[str(member.id)]} баллов.')
+        else:
+            await ctx.send(f'{member.name} не найден в списке пользователей.')
     else:
-        await ctx.send(f'{member.name} не найден в списке пользователей.')
-
+        await ctx.send('У вас нет прав на выполнение этой команды.')
 # Обработка ошибок
 @give_cookie.error
 @take_cookie.error
@@ -228,6 +240,40 @@ async def cookie_command_error(ctx, error):
     if isinstance(error, commands.CheckFailure):
         await ctx.send('У вас нет прав на выполнение этой команды.')
 
+@bot.command(name='list_admins')
+async def list_admins(ctx):
+    admins = load_admins()
+    
+    if admins:
+        admin_info = [f'<@{admin_id}>' for admin_id in admins]  # Формируем список с упоминанием каждого админа
+        await ctx.send(f'Текущие админы:\n' + '\n'.join(admin_info))
+    else:
+        await ctx.send('Список админов пуст.')
+
+@bot.command(name='admin_add')
+@commands.has_permissions(administrator=True)
+async def add_admin(ctx, member: discord.Member):
+    admins = load_admins()
+    
+    if member.id not in admins:
+        admins.append(member.id)
+        save_admins(admins)
+        await ctx.send(f'{member.name} был добавлен в список админов.')
+    else:
+        await ctx.send(f'{member.name} уже является админом.')
+
+# Команда для удаления админа
+@bot.command(name='admin_remove')
+@commands.has_permissions(administrator=True)
+async def remove_admin(ctx, member: discord.Member):
+    admins = load_admins()
+    
+    if member.id in admins:
+        admins.remove(member.id)
+        save_admins(admins)
+        await ctx.send(f'{member.name} был удалён из списка админов.')
+    else:
+        await ctx.send(f'{member.name} не является админом.')
 
 
 
