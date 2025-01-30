@@ -23,7 +23,7 @@ intents.members = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 # ID роли тайм-аута (Mute)
-MUTE_ROLE_ID = 1261262090379853955
+MUTE_ROLE_ID = [1261262090379853955, 1334516739945533440]
 
 ALLOWED_ROLE_IDS = [1101454647794876417, 1101455245176995950]
 
